@@ -5,12 +5,12 @@ using UnityEngine;
 public class JumpArea : MonoBehaviour
 {
 
-    private void OnTriggerEnter(Collider other)
+    private void OnCollisionEnter(Collision collision)
     {
-        if (other.gameObject.tag == "Player")
+        if (collision.gameObject.tag == "Player")
         {
-            Rigidbody rb = other.gameObject.GetComponent<Rigidbody>();
-            rb.AddForce(new Vector3(0, 500, 0));
+            Rigidbody rb = collision.gameObject.GetComponent<Rigidbody>();
+            rb.AddForce(new Vector3(0, 20, 0));
 
             Destroy(this.gameObject);
         }

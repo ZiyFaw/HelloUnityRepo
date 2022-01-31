@@ -4,38 +4,55 @@ using UnityEngine;
 
 public class Player : MonoBehaviour
 {
-    public Rigidbody rb;
-    public float speed = 10.0f;
-
-    MeshRenderer meshRenderer;
+    public GameObject plane;
+    private Rigidbody rb;
+    public float speed = 2.0f;
+    private Collision collision;
+    public bool onGround;
+    public float jumpHeight = 7.0f;
 
     // Start is called before the first frame update
     void Start()
     {
+        onGround = true;
+
         if (rb == null)
         {
             rb = GetComponent<Rigidbody>();
         }
-
-        meshRenderer = GetComponent<MeshRenderer>();
     }
 
     // Update is called once per frame
     void Update()
     {
-        Vector3 randDir = Random.onUnitSphere * speed;
+        float x = Input.GetAxis("Horizontal");
+        float z = Input.GetAxis("Vertical");
 
-        rb.AddForce(new Vector3(randDir.x, 0, randDir.z));
+        Vector3 dir = new Vector3(x, 0, z);
+
+        rb.AddForce(speed * dir);
+
+        if (onGround)
+        {
+            if (Input.GetButtonDown("Jump"))
+            {
+                rb.velocity = new Vector3(rb.velocity.x, jumpHeight, rb.velocity.z);
+                onGround = false;
+            }
+        }
+
+        
     }
 
     private void OnCollisionEnter(Collision collision)
     {
         Debug.Log("Collision Enter: " + collision.gameObject.name);
 
-        if (collision.gameObject.tag == "Obstacle")
+        onGround = true;
+
+        if (collision.gameObject.tag == "Break")
         {
-            MeshRenderer other = collision.gameObject.GetComponent<MeshRenderer>();
-            meshRenderer.material.color = other.material.color;
+            Destroy(collision.gameObject);
         }
     }
 
